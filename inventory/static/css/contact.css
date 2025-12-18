@@ -1,0 +1,116 @@
+/* General Page Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #121212;
+    color: #eaeaea;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    margin: 0;
+    padding: 20px;
+    overflow: hidden;
+    background-image: radial-gradient(circle at 20% 30%, #1a1a2e 0%, #121212 100%);
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header Styling */
+h1 {
+    font-size: 2.8rem;
+    font-weight: 600;
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+/* Form Container */
+form {
+    background: linear-gradient(145deg, #0f3460, #16213e);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    max-width: 420px;
+    width: 100%;
+    animation: slideUp 0.7s ease-in-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Input Fields */
+input, textarea {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0;
+    border: none;
+    border-bottom: 2px solid #3b82f6;
+    background: #0f1c2e;
+    color: #eaeaea;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus {
+    border-color: #60a5fa;
+    background-color: #101f38;
+    outline: none;
+    box-shadow: 0 0 12px rgba(96, 165, 250, 0.3);
+}
+
+/* Submit Button */
+button {
+    width: 100%;
+    padding: 14px;
+    background: #2563eb;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #1e40af;
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 15px rgba(30, 64, 175, 0.3);
+}
+
+/* Message Display */
+div {
+    background: rgba(255, 255, 255, 0.07);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+        height: auto;
+    }
+
+    form {
+        padding: 20px;
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+}

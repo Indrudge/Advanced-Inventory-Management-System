@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    {% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <link rel="icon" href="{% static 'images/main.jpg' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="dropdown">
+                <button class="dropbtn">
+                    <img src="{% static 'images/menu.png' %}" alt="Menu">
+                </button>
+                <div class="dropdown-content">
+                    <a href="{% url 'about' %}">About US</a>
+                    <a href="{% url 'contact_us' %}">Contact US</a>
+                    <!-- <a href="#">Reports</a>
+                    <a href="#">Settings</a> -->
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-center">
+            <h1>InventoryPro</h1>
+        </div>
+
+        <div class="nav-right">
+            <div class="dropdown">
+                <button class="dropbtn">
+                    <img src="{% static 'images/login_img.png' %}" alt="Menu">
+                </button>
+                <div class="dropdown-content">
+                    <a href="{% url 'workplace_login'%}">Workplace</a>
+                    <!-- <a href="#Customer</a> -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    {% block content %}{% endblock %}
+
+</body>
+</html>

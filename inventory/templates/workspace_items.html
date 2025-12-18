@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="{% static 'images/main.jpg' %}" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ workspace }} Items</title>
+    <link rel="stylesheet" href="{% static 'css/workspace_items.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Items at {{ workspace }}</h1>
+        <a href="{% url 'customer_home' %}">Back to Home</a>
+    </header>
+
+    <section class="items">
+        <h2>Available Items</h2>
+        <div class="item-list">
+            {% for item in items %}
+                <div class="item">
+                    <h3>{{ item.item_name }}</h3>
+                    <p>Category: {{ item.item_cat }}</p>
+                    <p>Size: {{ item.item_size }}</p>
+                    <p>Price: ₹{{ item.item_price }}</p>
+                    <form method="POST" action="{% url 'add_to_cart' item.item_id %}">
+                        {% csrf_token %}
+                        <input type="number" name="quantity" value="1" min="1">
+                        <button type="submit">Add to Cart</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+</body>
+</html>

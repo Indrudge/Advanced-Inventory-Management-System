@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Home</title>
+    <link rel="icon" href="{% static 'images/main.jpg' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/customer_home.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Welcome, {{ customer }}!</h1>
+        <a href="#">Logout</a>
+    </header>
+
+    <section class="workspaces">
+        <h2>Available Workspaces</h2>
+        <div class="workspace-list">
+            {% for workspace in workspaces %}
+                <div class="workspace-item">
+                    <h3>{{ workspace.name }}</h3>
+                    <p>Type: {{ workspace.workplace_type }}</p>
+                    <p>Address: {{ workspace.address }}</p>
+                    <a href="{% url 'workspace_items' workspace.name %}">View Items</a>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+</body>
+</html>

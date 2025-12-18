@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h2>Smart Inventory Management for Your Café</h2>
+        <p>Optimize stock levels, reduce waste, and maximize efficiency with AI-powered insights.</p>
+    </div>
+</section>
+
+<!-- What We Offer Section -->
+<section class="features">
+    <h2>What We Offer</h2>
+    <div class="feature-container">
+        <div class="feature-box">
+            <img src="{% static 'images/stock.jpeg' %}" alt="Stock">
+            <p>Real-time Stock Tracking</p>
+        </div>
+        <div class="feature-box">
+            <img src="{% static 'images/Cute_bot.png' %}" alt="Forecast">
+            <p>AI-powered Demand Forecasting</p>
+        </div>
+        <div class="feature-box">
+            <img src="{% static 'images/Statistic.jpg' %}" alt="Reports">
+            <p>Detailed Reports & Insights</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

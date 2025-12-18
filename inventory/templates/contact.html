@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <link rel="icon" href="{% static 'images/main.jpg' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/contact.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="logo">Cafe Inventory</div>
+        <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'shop' %}">Shop</a></li>
+            <li><a href="{% url 'contact' %}">Contact Us</a></li>
+        </ul>
+    </nav>
+
+    <!-- Contact Form -->
+    <section class="contact-container">
+        <h2>Contact Us</h2>
+        <p>If you have any queries, feel free to reach out!</p>
+        <form id="contact-form">
+            <input type="text" id="name" name="name" placeholder="Your Name" required>
+            <input type="email" id="email" name="email" placeholder="Your Email" required>
+            <input type="tel" id="phone" name="phone" placeholder="Your Phone Number" required>
+            <textarea id="query" name="query" placeholder="Your Query" required></textarea>
+
+            <label for="response_type">Preferred Response:</label>
+            <select id="response_type" name="response_type" required>
+                <option value="Call">Call</option>
+                <option value="SMS">SMS</option>
+                <option value="Email">Email</option>
+            </select>
+
+            <button type="submit">Submit</button>
+        </form>
+
+        <p id="response-message"></p>
+    </section>
+
+    <script src="{% static 'js/contact.js' %}"></script>
+
+</body>
+</html>

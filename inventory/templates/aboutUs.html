@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load static %}
+<head>
+  <meta charset="UTF-8">
+  <title>About Us - Project Team</title>
+  <link rel="icon" href="{% static 'images/main.jpg' %}" type="image/x-icon">
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background Video Styling */
+    #bg-video {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      z-index: -1;
+      filter: brightness(40%);
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: -1;
+    }
+
+    .container {
+      padding: 50px 10%;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #00cec9;
+    }
+
+    p.subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      color: #dfe6e9;
+    }
+
+    .team {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    .member {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      width: 250px;
+      transition: transform 0.3s ease;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    }
+
+    .member:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.5);
+    }
+
+    .member h3 {
+      margin: 10px 0 5px;
+      color: #81ecec;
+    }
+
+    .member p {
+      margin: 2px 0;
+      color: #dcdde1;
+      font-size: 0.95rem;
+    }
+
+    .mentor {
+      margin-top: 60px;
+      padding-top: 20px;
+      border-top: 1px solid #555;
+    }
+
+    .mentor h2 {
+      color: #fab1a0;
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .mentor p {
+      font-size: 1.1rem;
+      color: #ffeaa7;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Video -->
+  <video autoplay muted loop id="bg-video">
+    <source src="{% static 'videos/Matrix.mp4' %}" type="video/mp4">
+    Your browser does not support HTML5 video.
+</video>
+
+
+  <div class="overlay"></div>
+
+  <div class="container">
+    <h1>About Our Team</h1>
+    <p class="subtitle">United by code, driven by innovation — crafting intelligent inventory solutions</p>
+
+    <div class="team">
+        <div class="member">
+        <h3>Indrudge Panwar</h3>
+        <p><strong>Roll No:</strong> R252222057</p>
+        <p><strong>SAP ID:</strong> 500104666</p>
+        <p>Back-end & Frontend Integration</p>
+      </div>
+      <div class="member">
+        <h3>Bhavishya Aggarwal</h3>
+        <p><strong>Roll No:</strong> R252222113</p>
+        <p><strong>SAP ID:</strong> 500109518</p>
+        <p>Back-end & Database Design</p>
+      </div>
+      <div class="member">
+        <h3>Gargi Verma</h3>
+        <p><strong>Roll No:</strong> R252222026</p>
+        <p><strong>SAP ID:</strong> 500106915</p>
+        <p>Documentation & UX Design</p>
+      </div>
+      <div class="member">
+        <h3>MD Samiullah Rahaman</h3>
+        <p><strong>Roll No:</strong> R252222144</p>
+        <p><strong>SAP ID:</strong> 500110567</p>
+        <p>ML Integration  & Testing </p>
+      </div>
+    </div>
+
+    <div class="mentor mentor">
+      <h2>Guided By</h2>
+      <p><strong>Priyanka Goel</strong></p>
+      <p>Mentor, School of Computer Science<br>UPES Dehradun</p>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="{% static 'images/main.jpg' %}" type="image/x-icon">
+  <title>Contact Us</title>
+  <link rel="stylesheet" href="{% static 'css/contact.css' %}">
+</head>
+<body>
+  <h1>Contact Us</h1>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div>{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+    <label for="name">Name:</label><br>
+    <input type="text" name="name" id="name" required><br><br>
+
+    <label for="email">Email:</label><br>
+    <input type="email" name="email" id="email" required><br><br>
+
+    <label for="message">Message:</label><br>
+    <textarea name="message" id="message" rows="5" required></textarea><br><br>
+
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>

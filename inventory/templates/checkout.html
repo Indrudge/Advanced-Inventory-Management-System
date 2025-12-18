@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="icon" href="{% static 'images/main.jpg' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/checkout.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Checkout</h1>
+        <a href="{% url 'view_cart' %}">Back to Cart</a>
+    </header>
+
+    <section class="checkout">
+        <h2>Order Summary</h2>
+        <ul>
+            {% for item in items %}
+                <li>{{ item.item.item_name }} - ₹{{ item.item.item_price }} x {{ item.quantity }}</li>
+            {% endfor %}
+        </ul>
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit">Place Order</button>
+        </form>
+    </section>
+</body>
+</html>

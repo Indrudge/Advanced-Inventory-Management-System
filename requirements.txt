@@ -1,0 +1,6 @@
+django
+pymongo
+matplotlib
+pandas
+scikit-learn
+python-dateutil

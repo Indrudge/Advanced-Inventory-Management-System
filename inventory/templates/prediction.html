@@ -1,0 +1,264 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="{% static 'images/main.jpg' %}" type="image/x-icon">
+    <meta charset="UTF-8">
+    <title>Inventory Predictions & Restocking</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #181818;
+            color: #f4f4f4;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: #00ffff;
+            text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            color: #facc15;
+            margin-top: 40px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+            background-color: #222;
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+        }
+
+        th, td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+            font-size: 1rem;
+        }
+
+        th {
+            background-color: #2e2e2e;
+            color: #ffffff;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            transition: 0.3s ease-in-out;
+        }
+
+        .shortage {
+            color: #ff4d4d;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .status-message {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: #58cc58;
+            margin-top: 10px;
+        }
+
+        .button-group {
+            margin: 30px 0 20px 0;
+        }
+
+        button {
+            padding: 12px 20px;
+            margin: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00bcd4, #0088aa);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #0088aa, #006680);
+            transform: scale(1.05);
+        }
+
+        #sales-table.active,
+        #restock-table.active {
+            display: table;
+        }
+
+        /* Loading screen styles */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-color: #181818;
+            color: #00ffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            z-index: 1000;
+        }
+
+        .loader {
+            border: 5px solid #333;
+            border-top: 5px solid #00ffff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-right: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading-screen">
+        <div class="loader"></div>
+        Loading data...
+    </div>
+
+    <h1>Inventory Management Predictions</h1>
+
+    <div class="button-group">
+        <button onclick="fetchData()">Refresh Data</button>
+        <button onclick="window.history.back()">Go Back</button>
+        <button onclick="toggleView()">Toggle View</button>
+    </div>
+
+    <div class="container">
+        <h2 id="section-title">Item Sales Predictions (Next Day)</h2>
+
+        <table id="sales-table" class="active">
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>Item Name</th>
+                    <th>Size</th>
+                    <th>Predicted Quantity</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <table id="restock-table">
+            <thead>
+                <tr>
+                    <th>Ingredient ID</th>
+                    <th>Name</th>
+                    <th>Inventory ID</th>
+                    <th>Current Stock</th>
+                    <th>Predicted Usage</th>
+                    <th>Shortage</th>
+                    <th>Unit</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <p id="status-message" class="status-message"></p>
+    </div>
+
+    <script>
+        async function fetchData() {
+            const loader = document.getElementById("loading-screen");
+            loader.style.display = "flex";
+
+            try {
+                const response = await fetch('/get_inventory_predictions/');
+                const data = await response.json();
+
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                const salesBody = document.querySelector("#sales-table tbody");
+                const restockBody = document.querySelector("#restock-table tbody");
+                const statusMessage = document.getElementById("status-message");
+
+                salesBody.innerHTML = '';
+                restockBody.innerHTML = '';
+                statusMessage.textContent = '';
+
+                data.item_sales_predictions.forEach(item => {
+                    const row = `<tr>
+                        <td>${item.item_id}</td>
+                        <td>${item.item_name}</td>
+                        <td>${item.item_size}</td>
+                        <td>${item.predicted_quantity}</td>
+                    </tr>`;
+                    salesBody.innerHTML += row;
+                });
+
+                if (data.restocking_recommendations.length === 0) {
+                    statusMessage.textContent = "No restocking needed. All inventory levels are sufficient.";
+                } else {
+                    data.restocking_recommendations.forEach(ing => {
+                        const row = `<tr>
+                            <td>${ing.ing_id}</td>
+                            <td>${ing.ing_name}</td>
+                            <td>${ing.inv_id}</td>
+                            <td>${ing.current_stock}</td>
+                            <td>${ing.predicted_usage}</td>
+                            <td class="shortage">${ing.shortage}</td>
+                            <td>${ing.unit}</td>
+                        </tr>`;
+                        restockBody.innerHTML += row;
+                    });
+                }
+
+            } catch (error) {
+                alert("Failed to fetch data: " + error);
+            } finally {
+                loader.style.display = "none";
+            }
+        }
+
+        function toggleView() {
+            const salesTable = document.getElementById('sales-table');
+            const restockTable = document.getElementById('restock-table');
+            const sectionTitle = document.getElementById('section-title');
+
+            const showingSales = salesTable.classList.contains('active');
+
+            if (showingSales) {
+                salesTable.classList.remove('active');
+                restockTable.classList.add('active');
+                sectionTitle.textContent = 'Restocking Recommendations';
+            } else {
+                restockTable.classList.remove('active');
+                salesTable.classList.add('active');
+                sectionTitle.textContent = 'Item Sales Predictions (Next Day)';
+            }
+        }
+
+        fetchData();
+    </script>
+
+</body>
+</html>

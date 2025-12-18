@@ -1,0 +1,559 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Dashboard</title>
+  <link rel="icon" href="{% static 'images/main.jpg' %}" type="image/x-icon">
+  <link rel="stylesheet" href="{% static 'css/dash.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="dashboard-container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="dashboard-title">Dashboard</div>
+    <div id="ai-bot" title="Ask AI">
+        <a href="{% url 'prediction_page' %}">
+        <img src="{% static 'images/thinkBot.jpg' %}" alt="AI Bot" onselect="" >
+        </a>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="main-grid">
+    
+    <!-- Left Column: Quick Access Buttons -->
+    <div class="quick-access">
+      <div class="section-title">Quick Access</div>
+      <div class="button-grid">
+        
+        <!-- Inventory Button -->
+        <div class="quick-btn" onclick="loadAddInventory()">
+          <img src="https://storage.googleapis.com/a1aa/image/kPYDXVC-Qy1DQK__4-Ac7g5RyWWy3NJlFMyHIwglwhM.jpg" alt="Inventory" class="btn-icon">
+          <div class="btn-label">Add/Edit Inventory</div>
+        </div>
+
+        <!-- Sales Button -->
+        <div class="quick-btn" onclick="loadAddSales()">
+          <img src="https://storage.googleapis.com/a1aa/image/l9h8CwAQKU9TtlC7zNhZi0uL9D1B9JmQ5eFuerjYQP0.jpg" alt="Sales" class="btn-icon">
+          <div class="btn-label">Add New Sales</div>
+        </div>
+
+        <!-- Sales Stats Button -->
+        <div class="quick-btn" onclick="loadSalesStats()">
+          <img src="https://storage.googleapis.com/a1aa/image/JpKhvgdOWw4clj3GWdARYtPCgsBMV84Qp1rWljmOEEQ.jpg" alt="Sales Stats" class="btn-icon">
+          <div class="btn-label">See Sales Stats</div>
+        </div>
+
+        <!-- Inventory Stats Button -->
+        <div class="quick-btn" onclick="loadInventoryStats()">
+          <img src="https://storage.googleapis.com/a1aa/image/u0Cf106go_fgaDsRmMDkIo9BCFzhVUZgrUMD2fwuy7s.jpg" alt="Inventory Stats" class="btn-icon">
+          <div class="btn-label">See Inventory Stats</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Middle Column: Dynamic Content -->
+    <div class="dynamic-content" id="dynamic-content">
+      <div class="content-placeholder">Select an option from the left to see details</div>
+    </div>
+
+    <!-- Right Column: Pie Charts -->
+    <div class="charts-container">
+      
+      <!-- Inventory Pie Chart -->
+      <div class="chart-block">
+        <div class="chart-header">
+          <img src="https://storage.googleapis.com/a1aa/image/2WxIXXt5qknjLAA_E-k7tp7a5mEV7oQpLoUuvV1Agxw.jpg" class="chart-icon" alt="Inventory Icon">
+          <h2 class="chart-title">Inventory Overview</h2>
+        </div>
+        <canvas id="inventoryPieChart"></canvas>
+        <button class="view-more-btn" onclick="loadInventoryStats()">Show More</button>
+      </div>
+
+      <!-- Sales Pie Chart -->
+      <div class="chart-block">
+        <div class="chart-header">
+          <img src="https://storage.googleapis.com/a1aa/image/_dMTMDf1iUUIbaIU4u1vS2ptUwAb3_a08HYso3TTk-s.jpg" class="chart-icon" alt="Sales Icon">
+          <h2 class="chart-title">Sales Overview</h2>
+        </div>
+        <canvas id="salesPieChart"></canvas>
+        <button class="view-more-btn" onclick="loadSalesStats()">Show More</button>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
+
+  
+
+  
+  <!-- Inline JavaScript for Dynamic Content Loading -->
+  <script>
+    // Load Add/Edit Inventory Form with Dropdown
+    function loadAddInventory() {
+      // Fetch existing inventory items from backend
+      fetch("/get_inventory_items/")
+        .then(response => response.json())
+        .then(data => {
+          let items = data.items || [];
+          let dropdownOptions = `<option value="">Select an item to edit</option>`;
+          items.forEach(item => {
+            dropdownOptions += `<option value="${item.name}">${item.name} (Current: ${item.quantity})</option>`;
+          });
+          dropdownOptions += `<option value="new">-- Add New Item --</option>`;
+    
+          document.getElementById('dynamic-content').innerHTML = `
+            <div>
+              <h2 class="text-2xl mb-4">Add / Edit Inventory</h2>
+              <form id="inventory-form" class="space-y-4">
+                <div>
+                  <label class="block text-lg">Select Item</label>
+                  <select id="inventory-select" name="item" class="w-full p-2 border rounded">
+                    ${dropdownOptions}
+                  </select>
+                </div>
+                <div id="new-item-fields" style="display: none;">
+                  <div>
+                    <label class="block text-lg">New Item Name</label>
+                    <input type="text" name="new_item" class="w-full p-2 border rounded" placeholder="Item Name">
+                  </div>
+                  <div>
+                    <label class="block text-lg">Weight (ing_weight)</label>
+                    <input type="text" name="ing_weight" class="w-full p-2 border rounded" placeholder="e.g., 5kg">
+                  </div>
+                  <div>
+                    <label class="block text-lg">Measurement Unit (ing_meas)</label>
+                    <input type="text" name="ing_meas" class="w-full p-2 border rounded" placeholder="e.g., kg, liter">
+                  </div>
+                  <div>
+                    <label class="block text-lg">Price (ing_price)</label>
+                    <input type="number" step="0.01" name="ing_price" class="w-full p-2 border rounded" placeholder="e.g., 150.00">
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-lg">Quantity</label>
+                  <input type="number" name="quantity" class="w-full p-2 border rounded" placeholder="Quantity" required>
+                </div>
+                <button type="submit" class="bg-blue-500 text-white p-2 rounded">Submit</button>
+              </form>
+            </div>
+          `;
+    
+          // Toggle new item fields when "new" is selected
+          document.getElementById("inventory-select").addEventListener("change", function () {
+            document.getElementById("new-item-fields").style.display = this.value === "new" ? "block" : "none";
+          });
+    
+          // Handle form submission
+          document.getElementById("inventory-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            fetch("/add_inventory/", {
+              method: "POST",
+              body: formData,
+              headers: { "X-CSRFToken": "{{ csrf_token }}" }
+            })
+              .then(response => response.json())
+              .then(data => {
+                alert(data.message);
+                if (data.success) {
+                  alert("Inventory successfully updated!");
+                }
+                loadInventoryStats(); // Refresh inventory stats and pie chart if needed
+              })
+              .catch(error => {
+                console.error("Error adding inventory:", error);
+                alert("Inventory successfully updated!");
+              });
+          });
+        })
+        .catch(error => {
+          console.error("Error fetching inventory items:", error);
+          alert("Inventory successfully updated!");
+        });
+    }
+    
+    
+    
+   // Load Add Sales Form
+function loadAddSales() {
+  document.getElementById('dynamic-content').innerHTML = `
+    <div>
+      <h2 class="text-2xl mb-4">Add New Sale</h2>
+      <form id="sales-form" class="space-y-4">
+        <div>
+          <label class="block text-lg">Customer Name</label>
+          <input type="text" name="cust_name" class="w-full p-2 border rounded" required>
+        </div>
+        <div>
+          <label class="block text-lg">Order Type</label>
+          <select name="in_or_out" class="w-full p-2 border rounded" required>
+            <option value="">Select Order Type</option>
+            <option value="dine-in">Dine-In</option>
+            <option value="takeout">Takeout</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-lg">Select Item</label>
+          <select id="sales-item-select" class="w-full p-2 border rounded">
+            <option value="">Loading items...</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-lg">Quantity</label>
+          <input type="number" id="sales-item-qty" class="w-full p-2 border rounded" placeholder="Quantity" min="1">
+        </div>
+
+        <button type="button" id="add-to-cart" class="bg-green-500 text-white px-4 py-2 rounded">Add to Cart</button>
+
+        <div class="mt-6">
+          <h3 class="text-xl mb-2">Cart Items</h3>
+          <ul id="cart-list" class="mb-2"></ul>
+          <p><strong>Total:</strong> $<span id="cart-total">0</span></p>
+        </div>
+
+        <button type="submit" class="bg-blue-500 text-white p-2 rounded mt-4">Submit Sale</button>
+      </form>
+    </div>
+  `;
+
+  let cart = [];
+
+  // Fetch and populate item list
+  fetch("/get_items/")
+    .then(response => response.json())
+    .then(data => {
+      const select = document.getElementById("sales-item-select");
+      select.innerHTML = `<option value="">Select an item</option>`;
+      data.items.forEach(item => {
+        const display = `${item.item_name} (${item.item_size}) - $${item.item_price}`;
+        select.innerHTML += `<option value="${item.item_name}" data-price="${item.item_price}" data-id="${item.item_id}">${display}</option>`;
+      });
+    })
+    .catch(err => alert("Failed to load items."));
+
+  // Add to cart handler
+  document.getElementById("add-to-cart").addEventListener("click", () => {
+    const select = document.getElementById("sales-item-select");
+    const qty = parseInt(document.getElementById("sales-item-qty").value);
+    const itemName = select.value;
+    const price = parseFloat(select.selectedOptions[0].getAttribute("data-price") || 0);
+    const itemId = select.selectedOptions[0].getAttribute("data-id");
+
+    if (!itemName || qty <= 0) {
+      alert("Please select a valid item and quantity.");
+      return;
+    }
+
+    // Add item to cart
+    cart.push({ item_name: itemName, quantity: qty, price, item_id: itemId });
+
+    // Update UI
+    updateCartUI(cart);
+  });
+
+  function updateCartUI(cart) {
+    const list = document.getElementById("cart-list");
+    const totalElem = document.getElementById("cart-total");
+    list.innerHTML = "";
+
+    let total = 0;
+    cart.forEach((item, index) => {
+      total += item.quantity * item.price;
+      list.innerHTML += `
+        <li class="mb-1">
+          ${item.item_name} x ${item.quantity} = $${item.quantity * item.price}
+          <button onclick="removeFromCart(${index})" class="text-red-600 ml-2">[Remove]</button>
+        </li>`;
+    });
+
+    totalElem.innerText = total.toFixed(2);
+  }
+
+  window.removeFromCart = function (index) {
+    cart.splice(index, 1);
+    updateCartUI(cart);
+  };
+
+  // Final form submission
+  document.getElementById("sales-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (cart.length === 0) {
+      alert("Please add at least one item to the cart.");
+      return;
+    }
+
+    const formData = new FormData(this);
+    const payload = {
+      cust_name: formData.get("cust_name"),
+      in_or_out: formData.get("in_or_out"),
+      items: cart // Sending the cart array with item_name, quantity, price, and item_id
+    };
+
+    fetch("/add_sale/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken")
+      },
+      body: JSON.stringify(payload)
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          alert("Error: " + data.error);
+        } else {
+          alert(data.message || "Sale recorded successfully.");
+          loadSalesStats();
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Failed to submit sale.");
+      });
+  });
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+}
+
+    
+    
+    // Load Sales Stats
+    function loadSalesStats() {
+      fetch("/get_sales_stats/")
+        .then(response => response.json())
+        .then(stats => {
+          const weekLabels = Object.keys(stats.weekly_sales); // ['Mon', 'Tue', ...]
+          const weekValues = Object.values(stats.weekly_sales); // [4, 7, ...]
+    
+          document.getElementById('dynamic-content').innerHTML = `
+            <div>
+              <h2 class="text-2xl mb-4">Weekly Sales</h2>
+              <canvas id="weeklyBarChart" width="600" height="300"></canvas>
+              <div class="mt-4 text-lg">
+                <p>This Month: ${stats.sales_month}</p>
+                <p>This Year: ${stats.sales_year}</p>
+                <p>All Time Sales: ${stats.sales_total}</p>
+              </div>
+            </div>
+          `;
+    
+          const ctx = document.getElementById('weeklyBarChart').getContext('2d');
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: weekLabels,
+              datasets: [{
+                label: 'Items Sold (Quantity)',
+                data: weekValues,
+                backgroundColor: '#34d399' // greenish
+              }]
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  title: {
+                    display: true,
+                    text: 'Items Sold'
+                  }
+                }
+              }
+            }
+          });
+        })
+        .catch(error => console.error("Error loading stats:", error));
+    }
+    
+    
+    
+    
+    // Load Inventory Stats
+    function loadInventoryStats() {
+      fetch("/get_inventory_stats/")
+        .then(response => response.json())
+        .then(data => {
+          // Log the stats to check if it's being fetched correctly
+          console.log("Inventory Stats:", data);
+          
+          // Inject the canvas and summary info
+          document.getElementById('dynamic-content').innerHTML = `
+            <div>
+              <h2 class="text-2xl mb-4">Inventory Stats</h2>
+              <canvas id="inventoryBarChart" width="400" height="200"></canvas>
+              <div class="mt-4">
+                <p>Total Items: ${data.total_items || 0}</p>
+                <p>Out of Stock: ${data.out_of_stock || 0}</p>
+                <p>Low Stock: ${data.low_stock || 0}</p>
+              </div>
+            </div>
+          `;
+          
+          // Fetch the inventory data for chart rendering (use the correct endpoint here)
+          fetch("/get_inventory_data/")
+            .then(res => res.json())
+            .then(inventoryData => {
+              const inventoryLabels = inventoryData.name || [];  // Ingredient names as labels
+              const inventoryQuantities = inventoryData.inventory || [];  // Inventory quantities
+    
+              // Log the data to check
+              console.log("Inventory Labels:", inventoryLabels);
+              console.log("Inventory Quantities:", inventoryQuantities);
+    
+              // ✅ After canvas is added, initialize the bar chart
+              const ctx = document.getElementById('inventoryBarChart').getContext('2d');
+    
+              new Chart(ctx, {
+                type: 'bar',
+                data: {
+                  labels: inventoryLabels,             // Ingredient names as labels
+                  datasets: [{
+                    label: 'Inventory Levels',
+                    data: inventoryQuantities,          // Stock levels as the data
+                    backgroundColor: '#34d399'
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      title: {
+                        display: true,
+                        text: 'Stock Quantity'
+                      }
+                    }
+                  }
+                }
+              });
+            })
+            .catch(error => {
+              console.error("Error fetching inventory data:", error);
+            });
+        })
+        .catch(error => {
+          console.error("Error fetching inventory stats:", error);
+        });
+    }
+    
+    function loadpredictions() {
+      fetch('/prediction/')  // This returns the rendered prediction.html
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Failed to load prediction page");
+          }
+          return response.text();
+        })
+        .then(html => {
+          // Inject the HTML into your main content container
+          document.getElementById("dynamic-content").innerHTML = html;
+    
+          // Optionally scroll to top
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        })
+        .catch(error => {
+          console.error("Error loading prediction page:", error);
+          document.getElementById("dynamic-content").innerHTML = `
+            <div class="text-red-500 p-4">⚠️ Failed to load predictions.</div>
+          `;
+        });
+    }
+    
+  </script>
+  <script>
+
+ 
+  fetch('/get_inventory_data/')
+    .then(res => res.json())
+    .then(data => {
+      const inventoryLabels = data.name;      // Use 'name' as labels
+      const inventoryData = data.inventory;   // Use 'inventory' for the data values
+
+      // Inventory Pie Chart
+      new Chart(document.getElementById('inventoryPieChart'), {
+        type: 'pie',
+        data: {
+          labels: inventoryLabels,             // Ingredient names as labels
+          datasets: [{
+            label: 'Stock Quantity',
+            data: inventoryData,                // Stock levels
+            backgroundColor: ['#f87171', '#fbbf24', '#34d399', '#60a5fa', '#c084fc', '#f472b6']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+})
+.catch(error => {
+  console.error("Error fetching inventory data:", error);
+});
+
+
+
+
+  
+fetch("/get_sales_distribution/")  // Endpoint for fetching sales data by type (e.g., Dine-In, Takeout)
+.then(response => response.json())
+.then(data => {
+  // Prepare labels and data for the Pie Chart (Sales Distribution)
+  const salesLabels = Object.keys(data.sales_types);  // Dine-In, Takeout
+  const salesData = Object.values(data.sales_types);  // Counts for Dine-In and Takeout
+
+  // Sales Pie Chart
+  new Chart(document.getElementById('salesPieChart'), {
+    type: 'pie',
+    data: {
+      labels: salesLabels,
+      datasets: [{
+        label: 'Sales Distribution',
+        data: salesData,
+        backgroundColor: ['#a78bfa', '#facc15']  // Colors for Dine-In and Takeout
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }
+  });
+})
+.catch(error => {
+  console.error("Error fetching sales data:", error);
+});
+  
+
+
+  </script>
+  
+</body>
+</html>

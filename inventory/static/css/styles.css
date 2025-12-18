@@ -1,0 +1,120 @@
+/* Reset and General Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f4f4;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 9px 30px;
+}
+
+.nav-center h1 {
+    color: white;
+    font-size: 1.8rem;
+}
+
+/* Dropdown Menu */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn img {
+    width: 40px;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    min-width: 150px;
+    z-index: 1;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Login Button */
+.nav-right img {
+    width: 80px;
+    height: 50px;
+    cursor: pointer;
+}
+
+/* Hero Section */
+.hero {
+    background: url("../images/index1.jpg") no-repeat center center/cover;
+    height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: rgb(255, 255, 255);
+}
+
+.hero-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    max-width: 600px;
+}
+
+/* Features Section */
+.features {
+    text-align: center;
+    padding: 125px 20px;
+    background: url("../images/index2.jpg") no-repeat center center/cover;
+    color: white;
+}
+
+.feature-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.feature-box {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    margin: 10px;
+    width: 250px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.feature-box img {
+    width: 80px;
+    margin-bottom: 10px;
+}
+
+.feature-box p {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
